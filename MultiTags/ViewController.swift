@@ -8,20 +8,24 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+let spacing = 4
 
+class ViewController: UIViewController {
+    
     @IBOutlet weak var collectionView: UICollectionView!
     
-    var items = ["Hi", "Hello", "Welcome", "Hola", "Hello World", "Welcome to you", "Bonjour", "Bonnuit", "Bon appetite", "Hi", "Hello", "Welcome"]
+    
+    var items = ["Hi", "Hello", "g", "t", "x", "c", "welcome", "Hola", "Hello World", "Welcome to you", "Bonjour", "Bonnuit", "Bon appetite"]
     private var tagHeight: CGFloat = 36
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let layout = NBCollectionViewFlowLayout()
         layout.scrollDirection = .vertical
+        
         collectionView.collectionViewLayout = layout
     }
-
+    
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -60,6 +64,9 @@ extension ViewController: UICollectionViewDelegateFlowLayout, UICollectionViewDe
         }, completion: nil)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return CGFloat(spacing)
+    }
 }
 
 class TagCell: UICollectionViewCell {
@@ -94,22 +101,24 @@ extension String {
 
 class NBCollectionViewFlowLayout: UICollectionViewFlowLayout {
     open override func layoutAttributesForElements(in rect: CGRect) -> [UICollectionViewLayoutAttributes]? {
-        if var answer = super.layoutAttributesForElements(in: rect) {
-            let count = answer.count
-            for i in 1..<count {
-                let currentLayoutAttributes = answer[i]
-                let prevLayoutAttributes = answer[i-1]
-                let maxSpacing = 4
-                let origin = prevLayoutAttributes.frame.maxX
-                if (origin + 2 * CGFloat(maxSpacing) + currentLayoutAttributes.frame.size.width) < self.collectionViewContentSize.width {
-                    var frame = currentLayoutAttributes.frame
-                    frame.origin.x = origin + CGFloat(maxSpacing)
-                    currentLayoutAttributes.frame = frame
-                }
-            }
-            return answer
-        } else {
-            return []
+        guard let answer = super.layoutAttributesForElements(in: rect) else {
+            return nil
         }
+        let count = answer.count
+        for i in 1..<count {
+            let currentLayoutAttributes = answer[i]
+            let prevLayoutAttributes = answer[i-1]
+            let origin = prevLayoutAttributes.frame.maxX
+            if (origin + CGFloat(spacing) + currentLayoutAttributes.frame.size.width) < self.collectionViewContentSize.width && currentLayoutAttributes.frame.origin.x > prevLayoutAttributes.frame.origin.x {
+                var frame = currentLayoutAttributes.frame
+                frame.origin.x = origin + CGFloat(spacing)
+                currentLayoutAttributes.frame = frame
+            }
+        }
+        return answer
+    }
+    
+    override func shouldInvalidateLayout(forBoundsChange newBounds: CGRect) -> Bool {
+        return true
     }
 }
