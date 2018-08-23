@@ -106,7 +106,6 @@ class NBCollectionViewFlowLayout: UICollectionViewFlowLayout {
                     frame.origin.x = origin + CGFloat(maxSpacing)
                     currentLayoutAttributes.frame = frame
                 }
-                answer[i] = currentLayoutAttributes
             }
             return answer
         } else {
